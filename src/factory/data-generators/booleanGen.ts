@@ -1,6 +1,4 @@
-interface DataGenerator {
-  generate(isObjectType: boolean, name: string): SafeAny;
-}
+import { DataGenerator } from '../interface';
 
 class BooleanGenerator implements DataGenerator {
   generate(isObjectType: boolean, name: string): { [key: string]: boolean } | boolean {

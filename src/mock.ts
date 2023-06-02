@@ -1,14 +1,4 @@
-interface DataGenerator {
-  generate(isObjectType: boolean, type: string): SafeAny;
-}
-
-interface CustomDataGenerator {
-  generate(isObjectType: boolean, type: string): SafeAny;
-}
-
-interface TemplateDataTransformer {
-  transformer(): SafeAny;
-}
+import { DataGenerator, CustomDataGenerator, TemplateDataTransformer } from 'src/factory/interface';
 
 import NumberGenerator from './factory/data-generators/numberGen';
 import StringGenerator from './factory/data-generators/stringGen';
@@ -88,47 +78,37 @@ class Mock {
   };
 
   //TODO 后续拆分优化
-  generate(config: string | { [key: string]: valueType; }) {
+  gen(config: string | { [key: string]: valueType; }) {
     let generator: DataGenerator | CustomDataGenerator = new BooleanGenerator();
     let isObjectType = false;
     let templateName = '';
-    let generatorCollector: { maker: typeof generator, name: string }[] = [];
     let originType = '';
     //针对mock.generate({})模板的情况
     if (typeof config === 'object') {
       isObjectType = true;
-      for (const key in config) {
-        if (config.hasOwnProperty(key)) {
-          let templateConfig = new DataToRules({ [key]: config[key] });
-          templateName = templateConfig.name;
-          //针对值为@的情况e.g: "number|+100": '@number(7,10)',
-          if (typeof templateConfig.initData === 'string' && /@/.test(templateConfig.initData)) {
-            originType = /@array/.test(templateConfig.initData) ? 'array' : '';
-            templateConfig.initData = this.generatorBuild(templateConfig.initData).generate(false, templateConfig.type);
-          }
-          let templateTransformer = this.templateTransformerFactory[templateConfig.type]?.(templateConfig.rules, templateConfig.initData);
-          generator = this.generatorBuild(templateTransformer?.transformer(), originType);
-          generatorCollector.push({
-            maker: generator,
-            name: templateName
-          });
+      const generatorCollector = Object.entries(config).map(([key, value]) => {
+        const templateConfig = new DataToRules({ [key]: value });
+        templateName = templateConfig.name;
+        //针对值为@的情况e.g: "number|+100": '@number(7,10)',
+        if (typeof templateConfig.initData === 'string' && /@/.test(templateConfig.initData)) {
+          originType = /@array/.test(templateConfig.initData) ? 'array' : '';
+          templateConfig.initData = this.generatorBuild(templateConfig.initData).generate(false, templateConfig.type);
         }
-      }
-      //针对mock.generate(@type)的情况
+        const templateTransformer = this.templateTransformerFactory[templateConfig.type]?.(templateConfig.rules, templateConfig.initData);
+        generator = this.generatorBuild(templateTransformer?.transformer(), originType);
+        return {
+          maker: generator,
+          name: templateName
+        };
+      });
+      const generateorTemplateResult = Object.assign({}, ...generatorCollector.map(val => val.maker.generate(isObjectType, val.name)));
+      return generateorTemplateResult;
     } else if (typeof config === 'string') {
       generator = this.generatorBuild(config);
     } else {
       console.log('参数类型未知');
     }
-    if (generatorCollector.length > 0) {
-      let generateorTemplateResult = {};
-      for (let val of generatorCollector) {
-        Object.assign(generateorTemplateResult, val.maker.generate(isObjectType, val.name))
-      }
-      return generateorTemplateResult;
-    } else {
-      return generator.generate(isObjectType, templateName);
-    }
+    return generator.generate(isObjectType, templateName);
   }
 
   generatorBuild(config: string, originType: string = ''): DataGenerator | CustomDataGenerator {

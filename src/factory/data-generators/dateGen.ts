@@ -1,6 +1,4 @@
-interface DataGenerator {
-  generate(isObjectType: boolean, name: string): SafeAny;
-}
+import { DataGenerator } from '../interface';
 
 class DateGenerator implements DataGenerator {
   dateResult = ""

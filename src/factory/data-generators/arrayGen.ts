@@ -1,6 +1,4 @@
-interface DataGenerator {
-  generate(isObjectType: boolean): SafeAny;
-}
+import { DataGenerator } from '../interface';
 
 class ArrayGenerator implements DataGenerator {
   private arrayResult: number[];

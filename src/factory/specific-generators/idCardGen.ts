@@ -1,6 +1,4 @@
-interface CustomDataGenerator {
-  generate(isObjectType: boolean, name: string): SafeAny;
-}
+import { CustomDataGenerator } from '../interface';
 
 class IDCardGenerator implements CustomDataGenerator {
   private idResult: string;

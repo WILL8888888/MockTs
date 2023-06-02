@@ -1,7 +1,6 @@
 import { valueType } from 'src/const';
-interface TemplateDataTransformer {
-  transformer(): SafeAny;
-}
+import { TemplateDataTransformer } from '../interface';
+
 class TemplateNumberTrans implements TemplateDataTransformer {
   private templateNumber: string = '@number';
 
