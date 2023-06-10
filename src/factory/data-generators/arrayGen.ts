@@ -1,14 +1,7 @@
-import { DataGenerator } from '../interface';
-
-class ArrayGenerator implements DataGenerator {
-  private arrayResult: number[];
-
-  constructor(result: number[]) {
-    this.arrayResult = result;
-  }
-
-  generate(isObjectType: boolean): SafeAny[] {
-    return this.arrayResult;
+import BaseGenerator from './baseGen';
+class ArrayGenerator extends BaseGenerator<SafeAny[]> {
+  constructor(result: SafeAny[]) {
+    super(result);
   }
 }
 

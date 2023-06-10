@@ -1,14 +1,7 @@
-import { DataGenerator } from '../interface';
-
-class NumberGenerator implements DataGenerator {
-  private numberResult: number;
-
+import BaseGenerator from './baseGen';
+class NumberGenerator extends BaseGenerator<number> {
   constructor(result: number) {
-    this.numberResult = result;
-  }
-
-  generate(isObjectType: boolean, name: string): { [key: string]: number } | number {
-    return isObjectType ? { [name]: this.numberResult } : this.numberResult;
+    super(result);
   }
 }
 

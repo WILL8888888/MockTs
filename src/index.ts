@@ -13,7 +13,7 @@ console.log(mock.gen('@boolean()')); //e.g: true
 console.log(mock.gen('@number')); //e.g: -9007199259251704
 console.log(mock.gen('@number()'));//e.g: -9007199513986068
 console.log(mock.gen('@number(8)'));//e.g: -352010177
-console.log(mock.gen('@number(8,100)'));//e.g: 92
+console.log(mock.gen('@number(8,100, 200)'));//e.g: 92
 console.log(mock.gen('@number(8, 8)'));//e.g: 8
 
 //string
@@ -62,14 +62,21 @@ console.log(mock.gen('@datetime("HH H hh h mm m ss s SS S A a T")')); //e.g: 15 
 console.log(mock.gen('@object')); //e.g: { kubtb: 'BUGPY' }
 console.log(mock.gen('@object()')); //e.g: { tubb: 'NOYK' }
 console.log(mock.gen('@object(1, 10)')); //e.g: { kmpjmp: 'KSZSDAA', mcty: 'ZUL', vxvbih: 'EZHETUD', lsj: 'XDU' }
-console.log(mock.gen('@object(2, 10, {"310000": "上海市", "320000": "江苏省", "330000": "浙江省", "340000": "安徽省"})')); //e.g: { '320000': '江苏省', '340000': '安徽省' }
+console.log(mock.gen('@object(2, 10, {"310000": "@string(upper, 5)", "320000": "江苏省", "330000": "浙江省", "340000": "安徽省"})')); //e.g: { '320000': 'DCXMX', '340000': '安徽省' }
 
 //array
 
 console.log(mock.gen('@array')); //e.g: []
 console.log(mock.gen('@array()')); //e.g: []
-console.log(mock.gen('@array(3, 7)')); //e.g: [ 3, 4, 5, 6 ]
-console.log(mock.gen('@array(1, 10, 2)')); //e.g: [ 1, 3, 5, 7, 9 ]
+console.log(mock.gen('@array([1,2,3,4,5], 3, 6)')); //e.g: [ 3, 4, 5, 6 ]
+console.log(mock.gen('@array("number", 3, 6)')); //e.g: [ -9007200743133732, -9007200294278760, -9007197882659496 ]
+console.log(mock.gen('@array("string", 3)')); //e.g: [ 'afe', 'qhjar', 'jgqgiy', 'nvu' ]
+console.log(mock.gen('@array("object", 3, 6)')); //e.g: [{ '310000': '上海市', '320000': '江苏省', '340000': '安徽省' },{ '320000': '江苏省', '330000': '浙江省' }, { '310000': '上海市', '340000': '安徽省' },]
+console.log(mock.gen('@array("boolean", 3, 6)'));//e.g: [ false, false, true, true, true ]
+console.log(mock.gen('@array("date", 3, 6)')); //e.g: [ '2023-06-04', '2023-06-04', '2023-06-04' ]
+console.log(mock.gen('@array("time", 3, 6)')); //e.g: [ '23:36:57', '23:36:57', '23:36:57', '23:36:57', '23:36:57' ]
+console.log(mock.gen('@array("datetime", 3, 6)')); //e.g: ['2023-06-04 23:36:57','2023-06-04 23:36:57','2023-06-04 23:36:57']
+
 
 // generate custom data
 
@@ -84,7 +91,7 @@ console.log(mock.gen('@phoneNumber("US")')); //e.g: 7061787793
 
 // generate data based on template
 
-console.log(mock.gen({
+console.dir(mock.gen({
   "aaa|1-100": '@number(7,10)',
   "bbb|+1": 712,
   "ccc": '@number(7,10)',
@@ -93,13 +100,22 @@ console.log(mock.gen({
   "fff": '@string("upper", 5)',
   "ggg": '@boolean',
   "hhh|2-4": {
-    "310000": "上海市",
+    "310000": "@string(upper, 5)",
     "320000": "江苏省",
-    "330000": "浙江省",
-    "340000": "安徽省"
+    "330000|2-4": {
+      "111": "@string(upper, 5)",
+      "222": "江苏省",
+      "333": "浙江省",
+      "444": "安徽省"
+    },
+    "340000|1-3": [{
+      "aa": 'xx',
+      "bb": 'yy',
+      "cc": 'zz',
+    }]
   },
-  "iii|2": {
-    "310000": "上海市",
+  "iii|2-4": {
+    "310000": "@string(upper, 5)",
     "320000": "江苏省",
     "330000": "浙江省",
     "340000": "安徽省"
@@ -110,29 +126,71 @@ console.log(mock.gen({
   },
   "kkk": '@object(1, 10)',
   "lll": '@idCard("CN")',
-  "mmm": '@phoneNumber("US")'
-}))
+  "mmm": '@phoneNumber("US")',
+  "nnn|2-4": [{
+    "iii|2-4": {
+      "310000": "@string(upper, 5)",
+      "320000": "江苏省",
+      "330000": "浙江省",
+      "340000|2-4": {
+        "aaa": "@string(upper, 5)",
+        "bbb": "@string(lower, 5)"
+      }
+    },
+    "222": {
+      "310000": "@string(upper, 5)",
+      "320000": "江苏省",
+      "330000": "浙江省",
+      "340000": "安徽省"
+    },
+    "333": "@number(7,10)",
+    "444": "@idCard(CN)"
+  }, {
+    "111": "@string(upper, 5)",
+    "222": "@boolean",
+    "333": "@number(7,10)",
+    "444": "@idCard(CN)"
+  }]
+}), { depth: null })
 
-//e.g: {
-//   aaa: 22,
+// e.g: {
+//   aaa: 10,
 //   bbb: 713,
 //   ccc: 10,
-//   ddd: 'BBAATBTBT',
+//   ddd: 'JRJR',
 //   eee: '★★★',
-//   fff: 'KEGRZ',
-//   ggg: true,
-//   hhh: { '320000': '江苏省', '330000': '浙江省', '340000': '安徽省' },
-//   iii: { '330000': '浙江省', '340000': '安徽省' },
-//   jjj: { '330000': '浙江省', '340000': '安徽省' },
-//   kkk: {
-//     pwqmgql: 'WXM',
-//     jxp: 'GCE',
-//     fsktx: 'DLNNNP',
-//     rlaufhj: 'MCOG',
-//     lxib: 'PXNMDZI',
-//     sjfrha: 'UFY',
-//     zmstw: 'NJR'
+//   fff: 'NMOFR',
+//   ggg: false,
+//   hhh: {
+//     '330000': { '111': 'EZSTR', '333': '浙江省' },
+//     '340000': [ { aa: 'xx', bb: 'yy', cc: 'zz' } ]
 //   },
-//   lll: 110102198411279870,
-//   mmm: 5043268942
+//   iii: { '310000': 'VQQTQ', '320000': '江苏省' },
+//   jjj: { '330000': '浙江省', '340000': '安徽省' },
+//   kkk: { mnjgpc: 'CUPE', ppphvus: 'HEIZ' },
+//   lll: 110102197108079680,
+//   mmm: 5098191763,
+//   nnn: [
+//     {
+//       '111': 'HXUHT',
+//       '222': true,
+//       '333': 10,
+//       '444': 110103200507201090
+//     },
+//     {
+//       '222': {
+//         '310000': 'QSOIB',
+//         '320000': '江苏省',
+//         '330000': '浙江省',
+//         '340000': '安徽省'
+//       },
+//       '333': 8,
+//       '444': 110103196210031540,
+//       iii: {
+//         '320000': '江苏省',
+//         '330000': '浙江省',
+//         '340000': { bbb: 'lkbff', aaa: 'IHASV' }
+//       }
+//     }
+//   ]
 // }

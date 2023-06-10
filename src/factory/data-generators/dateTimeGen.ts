@@ -1,12 +1,7 @@
-import { DataGenerator } from '../interface';
-
-class DateTimeGenerator implements DataGenerator {
-  private dateTimeResult: string;
+import BaseGenerator from './baseGen';
+class DateTimeGenerator extends BaseGenerator<string> {
   constructor(dateTime: string) {
-    this.dateTimeResult = dateTime
-  }
-  generate(isObjectType: boolean, name: string): { [key: string]: string } | string {
-    return isObjectType ? { [name]: this.dateTimeResult } : this.dateTimeResult
+    super(dateTime);
   }
 }
 

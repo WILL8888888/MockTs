@@ -1,9 +1,7 @@
-import { DataGenerator } from '../interface';
-
-class BooleanGenerator implements DataGenerator {
-  generate(isObjectType: boolean, name: string): { [key: string]: boolean } | boolean {
-    let result = Math.random() < 0.5;
-    return isObjectType ? { [name]: result } : result;
+import BaseGenerator from './baseGen';
+class BooleanGenerator extends BaseGenerator<boolean> {
+  constructor(result: boolean) {
+    super(result);
   }
 }
 

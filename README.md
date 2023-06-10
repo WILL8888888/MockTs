@@ -1,33 +1,37 @@
 # MOCK
 
 # Base
-number: @number(>min, <max, =init, #type)
+number: @number(min, max, init)
 ```
 mock.gen('@number()'); e.g: 223413;
 
 mock.gen('@number'); e.g: 223413;
 
-mock.gen('@number(>4, <10, =6, #'interger')') ;e.g: 8 
+mock.gen('@number(4, 10)') ;e.g: 8 
 
-mock.gen('@number(<10)'); e.g: -12211
+mock.gen('@number(10)'); e.g: -12211
 
-mock.gen('@number(>4)'); e.g: 2003221
-
-mock.gen('@number(=6)'); e.g: 6
-
-mock.gen('@number(>4, #'float')'); e.g: 4.2321
+mock.gen('@number(6, 6)'); e.g: 6
 ```
 
-string: @string(>4, <10, =pool | #type)
+string: @string(pool, min ,max)
 
 ```
-mock.gen('@string()'); e.g: 23r2fw%3
-
-mock.gen('@string'); e.g: wereWEGwqe$#@@
-
-mock.gen('@string(>5, <10, ='adABsfas')'); e.g: 'faAsBas'
-
-mock.gen('@string(>5, <10, #'lower')'); e.g: 'abcdefg';
+mock.gen('@string'); //e.g: xLH
+mock.gen('@string()'); //e.g: aw$^
+mock.gen('@string(5)'); //e.g: GA(VW
+mock.gen('@string("lower", 5)'); //e.g: elewr
+mock.gen('@string("upper", 5)'); //e.g: IDPSP
+mock.gen('@string("number", 5)'); //e.g: 68598
+mock.gen('@string("symbol", 5)'); //e.g: ^!]*^
+mock.gen('@string("aeiou", 5)'); //e.g: uaiuu
+mock.gen('@string(7, 10)'); //e.g: (##^4YU
+mock.gen('@string("lower", 1, 3)'); //e.g: g
+mock.gen('@string("upper", 1, 3)'); //e.g: PD
+mock.gen('@string("number", 1, 3)'); //e.g: 83
+mock.gen('@string("symbol", 1, 3)'); //e.g: #&#
+mock.gen('@string("aeiou", 1, 3)'); //e.g: ii
+mock.gen('@string("myself", 0, 0)'); //e.g: myself
 ```
 
 boolean: @boolean(odds?)
@@ -38,29 +42,21 @@ mock.gen('@boolean'); e.g: true
 
 mock.gen('@boolean(0.7)'); e.g: true
 ```
-array: @array(>min, <max, =[type])
+range: @range(start ,step, stop)
 ```
-mock.gen('@array()'); e.g: [1,3,4,5];
-
-mock.gen('@array(>4, <10, =['number'])'); e.g: [1,2,3,4,6,1,2];
-
-mock.gen('@array(>2, <20, =['string'])'); e.g: ['1212', '231233', 'dfadf'];
+mock.gen('@range'); //e.g: []
+mock.gen('@range()'); //e.g: []
+mock.gen('@range(3, 7)'); //e.g: [ 3, 4, 5, 6 ]
+mock.gen('@range(1, 10, 2)'); //e.g: [ 1, 3, 5, 7, 9 ]
 ```
 
-object: @object(>min, <max, =pool, #type)
+object: @object(min, max, pool)
 
 ```
 mock.gen('@object'); //e.g: { kubtb: 'BUGPY' }
-
 mock.gen('@object()'); //e.g: { tubb: 'NOYK' }
-
-mock.gen('@object(#number)') //e.g: {0001: 121323}
-
-mock.gen('@object(>1, <10)'); 
-//e.g: { kmpjmp: 'KSZSDAA', mcty: 'ZUL', vxvbih: 'EZHETUD', lsj: 'XDU' }
-
-mock.gen('@object(>2, <10, {"310000": "上海市", "320000": "江苏省", "330000": "浙江省", "340000": "安徽省"})'); 
-//e.g: { '320000': '江苏省', '340000': '安徽省' }
+mock.gen('@object(1, 10)'); //e.g: { kmpjmp: 'KSZSDAA', mcty: 'ZUL', vxvbih: 'EZHETUD', lsj: 'XDU' }
+mock.gen('@object(2, 10, {"310000": "上海市", "320000": "江苏省", "330000": "浙江省", "340000": "安徽省"})'); //e.g: { '320000': '江苏省', '340000': '安徽省' }
 ```
 
 time: @time(format?)

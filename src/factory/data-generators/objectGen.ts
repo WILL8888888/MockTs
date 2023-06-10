@@ -1,12 +1,7 @@
-import { DataGenerator } from '../interface';
-
-class ObjectGenerator implements DataGenerator {
-  private objectResult: object;
+import BaseGenerator from './baseGen';
+class ObjectGenerator extends BaseGenerator<object> {
   constructor(result: object) {
-    this.objectResult = result;
-  }
-  generate(isObjectType: boolean, name: string): { [key: string]: object } | object {
-    return isObjectType ? { [name]: this.objectResult } : this.objectResult;
+    super(result);
   }
 }
 

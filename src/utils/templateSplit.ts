@@ -28,7 +28,7 @@ export default class DataToRules {
     if (typeof initData === 'string' && /@/.test(initData)) {
       initType = extractMockType(initData)?.type ?? 'string'
     } else {
-      initType = typeof initData;
+      initType = Array.isArray(initData) ? 'array' : typeof initData;
     }
     return {
       name: nameSplit,

@@ -10,10 +10,10 @@ const defaultPool: Pool = {
 };
 
 export default class StringRules {
-  private pool: string = "";
+  public pool: string = "";
   private min: number = 3;
   private max: number = 7;
-  private minToLength: number = 0; //@string( pool, length )
+  public minToLength: number = 0; //@string( pool, length )
 
   constructor(pool: string | number, min: number, max: number) {
     if (typeof pool === "string") {
@@ -26,12 +26,8 @@ export default class StringRules {
         this.pool += defaultPool[key];
       }
     }
-    this.min = typeof min !== 'undefined' ? min : this.min;
-    this.max = typeof max !== 'undefined' ? max : this.max;
-  }
-
-  private defaultString() {
-    return this.pool;
+    this.min = min ?? this.min;
+    this.max = max ?? this.max;
   }
 
   private getRandomChar(): string {
@@ -39,14 +35,11 @@ export default class StringRules {
   }
 
   public stringRandom(): string {
-    if (this.max === 0) {
-      return this.defaultString();
-    }
     let length = this.minToLength ? this.minToLength : Math.floor(Math.random() * (this.max - this.min + 1)) + this.min;
     let result = "";
     for (let i = 0; i < length; i++) {
       result += this.getRandomChar();
     }
-    return result;
+    return this.max === 0 ? this.pool : result;
   }
 }

@@ -15,16 +15,19 @@ import TemplateNumberTransformer from './factory/template-transformers/templateN
 import TemplateStringTransformer from './factory/template-transformers/templateStringTrans';
 import TemplateBooleanTransformer from './factory/template-transformers/templateBooleanTrans';
 import TemplateObjectTransformer from './factory/template-transformers/templateObjectTrans';
+import TemplateArrayTransformer from './factory/template-transformers/templateArrayTrans';
 import TemplatePhoneNumberTransformer from './factory/template-transformers/templatePhoneNumberTrans';
 import TemplateIdCardTransformer from './factory/template-transformers/templateIdCardTrans';
 
 import { extractMockType } from './utils/transformer';
 import DataToRules from './utils/templateSplit';
+import { isObject } from './utils/common';
 import { typeMap, generatorType, valueType } from './const';
 import { Result } from './rulesMarket/data-rules/objectRules'
 
 import NumberRules from './rulesMarket/data-rules/numberRules';
 import StringRules from './rulesMarket/data-rules/stringRules';
+import BooleanRules from './rulesMarket/data-rules/booleanRules';
 import DateRules from './rulesMarket/data-rules/dateRules';
 import TimeRules from './rulesMarket/data-rules/timeRules';
 import DateTimeRules from './rulesMarket/data-rules/dateTimeRules';
@@ -41,7 +44,9 @@ class Mock {
     string: (params) => new StringGenerator(
       new StringRules(...(params as [string | number, number, number])).stringRandom()
     ),
-    boolean: () => new BooleanGenerator(),
+    boolean: (params) => new BooleanGenerator(
+      new BooleanRules(...params).booleanRandom()
+    ),
     date: (params) => new DateGenerator(
       DateRules.dateRandom(...params)
     ),
@@ -55,7 +60,7 @@ class Mock {
       new ObjectRules(...params as [number, number, Result]).objectRandom()
     ),
     array: (params) => new ArrayGenerator(
-      ArrayRules.arrayRandom(...(params as [number]))
+      new ArrayRules(...params as [SafeAny, number, number]).arrayRandom()
     )
   };
 
@@ -73,20 +78,51 @@ class Mock {
     string: (params, init) => new TemplateStringTransformer(params, init),
     boolean: (params, init) => new TemplateBooleanTransformer(params, init),
     object: (params, init) => new TemplateObjectTransformer(params, init),
+    array: (params, init) => new TemplateArrayTransformer(params, init),
     idCard: (params, init) => new TemplateIdCardTransformer(params, init),
     phoneNumber: (params, init) => new TemplatePhoneNumberTransformer(params, init),
   };
 
   //TODO 后续拆分优化
   gen(config: string | { [key: string]: valueType; }) {
-    let generator: DataGenerator | CustomDataGenerator = new BooleanGenerator();
+    let generator: DataGenerator | CustomDataGenerator = new BooleanGenerator(new BooleanRules().booleanRandom());
     let isObjectType = false;
     let templateName = '';
     let originType = '';
     //针对mock.generate({})模板的情况
-    if (typeof config === 'object') {
+    if (isObject(config)) {
       isObjectType = true;
-      const generatorCollector = Object.entries(config).map(([key, value]) => {
+      const generatorCollector = Object.entries(config).map(([key, value]: [string, SafeAny]) => {
+        //处理深层对象
+        if (isObject(value)) {
+          let innerObjectDeal: SafeAny = {};
+          for (const innerKey in value) {
+            if (isObject(value[innerKey]) || Array.isArray(value[innerKey])) {
+              let [innerGenKey, innerGenVal] = Object.entries(this.gen({ [innerKey]: value[innerKey] }))[0]
+              innerObjectDeal[innerGenKey] = innerGenVal;
+            } else {
+              innerObjectDeal[innerKey] = value[innerKey];
+            }
+          }
+          value = innerObjectDeal;
+        }
+
+        //处理深层对象数组
+        if (Array.isArray(value)) {
+          value = value.map((inner) => {
+            let innerArrayDeal: SafeAny = {};
+            for (const innerKey in inner) {
+              if (isObject(inner[innerKey]) || Array.isArray(inner[innerKey])) {
+                const [innerGenKey, innerGenVal] = Object.entries(this.gen({ [innerKey]: inner[innerKey] }))[0];
+                innerArrayDeal[innerGenKey] = innerGenVal;
+              } else {
+                innerArrayDeal[innerKey] = inner[innerKey];
+              }
+            }
+            return this.gen(innerArrayDeal);
+          });
+        }
+
         const templateConfig = new DataToRules({ [key]: value });
         templateName = templateConfig.name;
         //针对值为@的情况e.g: "number|+100": '@number(7,10)',
@@ -94,6 +130,7 @@ class Mock {
           originType = /@array/.test(templateConfig.initData) ? 'array' : '';
           templateConfig.initData = this.generatorBuild(templateConfig.initData).generate(false, templateConfig.type);
         }
+
         const templateTransformer = this.templateTransformerFactory[templateConfig.type]?.(templateConfig.rules, templateConfig.initData);
         generator = this.generatorBuild(templateTransformer?.transformer(), originType);
         return {
@@ -112,15 +149,24 @@ class Mock {
   }
 
   generatorBuild(config: string, originType: string = ''): DataGenerator | CustomDataGenerator {
-    let generator: DataGenerator | CustomDataGenerator = new BooleanGenerator();
+    let generator: DataGenerator | CustomDataGenerator = new BooleanGenerator(new BooleanRules().booleanRandom());
     let extract = extractMockType(config);
     if (!extract || !typeMap.includes(extract?.type ?? '')) {
       throw new Error('非法类型！');
     }
+    for (let val of extract.params) {
+      if (isObject(val)) {
+        Object.entries(val).forEach(([key, value]) => {
+          if (typeof value === 'string' && /@/.test(value)) {
+            val[key] = this.generatorBuild(value).generate(false, "");
+          }
+        })
+      }
+    }
     if (this.dataGeneratorFactory[extract.type]) {
-      generator = this.dataGeneratorFactory[extract.type]?.(originType === 'array' ? [extract.params] : extract.params) ?? new BooleanGenerator();
+      generator = this.dataGeneratorFactory[extract.type]?.(extract.params) ?? new BooleanGenerator(new BooleanRules().booleanRandom());
     } else if (this.customDataGeneratorFactory[extract.type]) {
-      generator = this.customDataGeneratorFactory[extract.type]?.(extract.params) ?? new BooleanGenerator();
+      generator = this.customDataGeneratorFactory[extract.type]?.(extract.params) ?? new BooleanGenerator(new BooleanRules().booleanRandom());
     }
     return generator;
   }
