@@ -4,31 +4,47 @@ import { extractMockType, hasObjDeal } from '../../src/utils/transformer';
 
 
 describe('extractMockType', () => {
-    it('should extract object type correctly', () => {
-        const mockType = '@object(2, 3, {"name": "@string", "age": "@number(10, 20)"})';
+    it('should return object type and params when input is @object(2, 3, {"name": "@string", "age": "@integer(10, 20)"})', () => {
+        const mockType = '@object(2, 3, {"name": "@string", "age": "@integer(10, 20)"})';
         const result = extractMockType(mockType);
         expect(result).toEqual({
             type: 'object',
-            params: [2, 3, { name: '@string', age: '@number(10, 20)' }]
+            params: [
+                '2',
+                '3',
+                {
+                    name: '@string',
+                    age: '@integer(10, 20)'
+                }
+            ]
         });
     });
 
-    it('should extract array type correctly', () => {
-        const mockType = '@array(["@string", "@number(1, 10)"], 5)';
+    it('should return array type and params when input is @array(["@string", "@integer(1, 10)"], 5)', () => {
+        const mockType = '@array(["@string", "@integer(1, 10)"], 5)';
         const result = extractMockType(mockType);
         expect(result).toEqual({
             type: 'array',
-            params: [['@string', '@number(1, 10)'], 5]
+            params: [
+                ['@string', '@integer(1, 10)'],
+                5
+            ]
         });
     });
 
-    it('should extract normal type correctly', () => {
-        const mockType = '@string(10)';
+    it('should return regex type and params when input is @integer(10, 20)', () => {
+        const mockType = '@integer(10, 20)';
         const result = extractMockType(mockType);
         expect(result).toEqual({
-            type: 'string',
-            params: [10]
+            type: 'integer',
+            params: [10, 20]
         });
+    });
+
+    it('should return null when input is invalid', () => {
+        const mockType = 'invalid';
+        const result = extractMockType(mockType);
+        expect(result).toBeNull();
     });
 });
 

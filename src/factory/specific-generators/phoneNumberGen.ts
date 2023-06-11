@@ -1,6 +1,6 @@
-import { CustomDataGenerator } from '../interface';
+import { DataGenerator } from '../interface';
 
-class PhoneNumberGenerator implements CustomDataGenerator {
+class PhoneNumberGenerator implements DataGenerator {
   private phoneNumResult: string;
   constructor(result: string) {
     this.phoneNumResult = result;

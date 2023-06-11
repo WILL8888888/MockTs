@@ -18,6 +18,13 @@ console.log(mock.gen('@number(8, 8)'));//e.g: 8
 
 //string
 
+/*支持以下内置字符集
+  lower: "abcdefghijklmnopqrstuvwxyz",
+  upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+  number: "0123456789",
+  symbol: "!@#$%^&*()[]",
+*/
+
 console.log(mock.gen('@string')); //e.g: xLH
 console.log(mock.gen('@string()')); //e.g: aw$^
 console.log(mock.gen('@string(5)')); //e.g: GA(VW

@@ -1,6 +1,6 @@
-import { CustomDataGenerator } from '../interface';
+import { DataGenerator } from '../interface';
 
-class IDCardGenerator implements CustomDataGenerator {
+class IDCardGenerator implements DataGenerator {
   private idResult: string;
   constructor(result: string) {
     this.idResult = result;

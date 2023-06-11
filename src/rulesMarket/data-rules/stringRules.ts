@@ -16,16 +16,8 @@ export default class StringRules {
   public minToLength: number = 0; //@string( pool, length )
 
   constructor(pool: string | number, min: number, max: number) {
-    if (typeof pool === "string") {
-      this.pool = defaultPool?.[pool] ?? pool;
-      this.minToLength = max ? this.minToLength : min;
-    } else {
-      this.minToLength = pool;
-      this.pool = "";
-      for (const key in defaultPool) {
-        this.pool += defaultPool[key];
-      }
-    }
+    this.pool = typeof pool === "string" ? defaultPool?.[pool] ?? pool : Object.values(defaultPool).join("");
+    this.minToLength = typeof pool === "string" ? (max ? this.minToLength : min) : pool;
     this.min = min ?? this.min;
     this.max = max ?? this.max;
   }
@@ -36,10 +28,8 @@ export default class StringRules {
 
   public stringRandom(): string {
     let length = this.minToLength ? this.minToLength : Math.floor(Math.random() * (this.max - this.min + 1)) + this.min;
-    let result = "";
-    for (let i = 0; i < length; i++) {
-      result += this.getRandomChar();
-    }
+    const result = Array.from({ length }, () => this.getRandomChar()).join("");
+
     return this.max === 0 ? this.pool : result;
   }
 }

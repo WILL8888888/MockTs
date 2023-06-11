@@ -16,6 +16,17 @@ mock.gen('@number(6, 6)'); e.g: 6
 
 string: @string(pool, min ,max)
 
+/*支持以下内置字符集
+
+  lower: "abcdefghijklmnopqrstuvwxyz",
+
+  upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+
+  number: "0123456789",
+
+  symbol: "!@#$%^&*()[]",
+
+*/
 ```
 mock.gen('@string'); //e.g: xLH
 mock.gen('@string()'); //e.g: aw$^

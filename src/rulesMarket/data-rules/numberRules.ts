@@ -10,9 +10,6 @@ export default class NmuberRules {
   }
 
   public intergerRandom(): number {
-    if (this.min === this.max) {
-      return this.min;
-    }
-    return (~~(Math.random() * (this.max - this.min + 1)) + this.min) || this.init;
+    return this.min === this.max ? this.min : ~~(Math.random() * (this.max - this.min + 1)) + this.min || this.init;
   }
 }

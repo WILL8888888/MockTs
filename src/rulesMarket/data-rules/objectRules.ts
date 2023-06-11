@@ -16,11 +16,7 @@ export default class ObjectRules {
     for (let i = 0; i < count; i++) {
       const key: string = new StringRules("lower", 3, 7).stringRandom();
       const value: string = new StringRules("upper", 3, 7).stringRandom();
-      if (pool) {
-        this.pool = pool;
-      } else {
-        this.pool[key] = value;
-      }
+      pool ? this.pool = pool : this.pool[key] = value;
     }
 
   }
