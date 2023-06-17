@@ -1,5 +1,5 @@
 import StringRules from './stringRules';
-import { isObject } from '../../utils/common';
+import { isObject, generateRangeRandom } from '../../utils/common';
 import { validateMinMax } from '../../utils/validMinMax';
 
 export interface Result {
@@ -14,7 +14,7 @@ export default class ObjectRules {
     this.min = min;
     this.max = max;
     if (this.max === 0) this.pool = pool;
-    const count = Math.floor(Math.random() * (this.max - this.min + 1)) + this.min;
+    const count = generateRangeRandom(this.min, this.max);
     for (let i = 0; i < count; i++) {
       const key: string = new StringRules("lower", 3, 7).stringRandom();
       const value: string = new StringRules("upper", 3, 7).stringRandom();
@@ -31,7 +31,7 @@ export default class ObjectRules {
     this.valid();
     if (this.max === 0) return this.pool;
     const keys = Object.keys(this.pool);
-    const count = Math.min(keys.length, Math.floor(Math.random() * (this.max - this.min + 1)) + this.min);
+    const count = Math.min(keys.length, generateRangeRandom(this.min, this.max));
     const selectedKeys = new Set<string>(); //有可能会取到重复属性，导致数量不对
     const result: Result = {};
     for (let i = 0; i < count; i++) {

@@ -2,6 +2,11 @@ import { it, expect, describe } from 'vitest';
 import BooleanRules from 'src/rulesMarket/data-rules/booleanRules';
 
 describe('booleanRandom', () => {
+    it('should throw an error if odds > 1', () => {
+        const booleanRules = new BooleanRules(2);
+        expect(() => { booleanRules.booleanRandom() }).toThrow('Invalid type! from: @boolean');
+    });
+
     it('return true with 100% odds', () => {
         const booleanRules = new BooleanRules(1);
         const result = booleanRules.booleanRandom();

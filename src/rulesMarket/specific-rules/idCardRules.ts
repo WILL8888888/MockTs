@@ -9,13 +9,18 @@ export default class IdCardRules {
   IdCardRandom() {
     //有initData直接返回默认值
     if (this.initData) return this.initData;
-    if (this.country === 'CN') {
-      return this.generateChineseID();
-    } else if (this.country === 'US') {
-      return this.generateUSID();
-    } else {
-      throw new Error('Unsupported country');
-    }
+    if (!['CN', 'US'].includes(this.country)) throw new Error('Unsupported country');
+    return [{
+      rules: this.country === 'CN',
+      action: () => {
+        return this.generateChineseID()
+      }
+    }, {
+      rules: this.country === 'US',
+      action: () => {
+        return this.generateUSID()
+      }
+    }].filter(item => item.rules)[0].action()
   }
 
   generateChineseID() {

@@ -9,13 +9,18 @@ export default class PhoneNumberGenerator {
   phoneNumRandom() {
     //有initData直接返回默认值
     if (this.initData) return this.initData;
-    if (this.countryCode === 'CN') {
-      return this.generateChinesePhoneNumber();
-    } else if (this.countryCode === 'US') {
-      return this.generateUSPhoneNumber();
-    } else {
-      throw new Error('Unsupported country');
-    }
+    if (!['CN', 'US'].includes(this.countryCode)) throw new Error('Unsupported country');
+    return [{
+      rules: this.countryCode === 'CN',
+      action: () => {
+        return this.generateChinesePhoneNumber();
+      }
+    }, {
+      rules: this.countryCode === 'US',
+      action: () => {
+        return this.generateUSPhoneNumber();
+      }
+    }].filter(item => item.rules)[0].action()
   }
 
   private generateChinesePhoneNumber() {

@@ -3,6 +3,11 @@ import ArrayRules from 'src/rulesMarket/data-rules/arrayRules';
 
 describe('ArrayRules', () => {
     describe('arrayRandom', () => {
+        it('should throw an error if typeof init is not string', () => {
+            const arrayRules = new ArrayRules({}, 3, 6);
+            expect(() => { arrayRules.arrayRandom() }).toThrow('Invalid type! from: @array');
+        });
+
         it('should return the input array when init is an array and min and max are not provided', () => {
             const arr = [1, 2, 3];
             const arrayRules = new ArrayRules(arr, undefined as SafeAny, undefined as SafeAny);

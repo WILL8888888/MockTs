@@ -5,15 +5,15 @@ class TemplateStringTrans implements TemplateDataTransformer {
   private templateString: string = "@string";
 
   constructor(params: string, init: valueType) {
-    if (params.includes('-')) {
-      const [min, max] = params.split('-').map(Number);
+    if (params.includes('to')) {
+      const [min, max] = params.split('to').map(Number);
       this.templateString = `@string(${init}, ${min}, ${max})`;
       return;
-    } else {
-      //max === 0即返回默认值
-      this.templateString = `@string(${init}, 0, 0)`;
-      return;
     }
+
+    //max === 0即返回默认值
+    this.templateString = `@string(${init}, 0, 0)`;
+    return;
   }
 
   transformer(): SafeAny {

@@ -1,5 +1,5 @@
 import { validateMinMax } from '../../utils/validMinMax';
-
+import { generateRangeRandom } from '../../utils/common';
 export default class NmuberRules {
   private min: number;
   private max: number;
@@ -18,6 +18,6 @@ export default class NmuberRules {
 
   public intergerRandom(): number {
     this.valid();
-    return this.min === this.max ? this.min : ~~(Math.random() * (this.max - this.min + 1)) + this.min || this.init;
+    return this.min === this.max ? this.min : generateRangeRandom(this.max, this.min) || this.init;
   }
 }

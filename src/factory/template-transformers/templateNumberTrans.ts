@@ -5,8 +5,8 @@ class TemplateNumberTrans implements TemplateDataTransformer {
   private templateNumber: string = '@number';
 
   constructor(params: string, init: valueType) {
-    if (params.includes('-')) {
-      const [min, max] = params.split('-').map(Number);
+    if (params.includes('to')) {
+      const [min, max] = params.split('to').map(Number);
       this.templateNumber = `@number(${min}, ${max}, ${init})`;
       return;
     }

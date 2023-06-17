@@ -1,4 +1,5 @@
 import { validateMinMax } from '../../utils/validMinMax';
+import { generateRangeRandom } from '../../utils/common';
 
 interface Pool {
   [key: string]: string;
@@ -35,7 +36,7 @@ export default class StringRules {
 
   public stringRandom(): string {
     this.valid();
-    let length = this.minToLength ? this.minToLength : Math.floor(Math.random() * (this.max - this.min + 1)) + this.min;
+    let length = this.minToLength ? this.minToLength : generateRangeRandom(this.min, this.max);
     const result = Array.from({ length }, () => this.getRandomChar()).join("");
 
     return this.max === 0 ? this.pool : result;

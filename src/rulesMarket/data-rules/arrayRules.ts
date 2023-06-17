@@ -6,6 +6,7 @@ import DateRules from './dateRules';
 import dateTimeRules from './dateTimeRules';
 import TimeRules from './timeRules';
 import { validateMinMax } from '../../utils/validMinMax';
+import { generateRangeRandom } from '../../utils/common';
 
 interface TypeMap {
   [key: string]: SafeAny;
@@ -35,7 +36,7 @@ export default class ArrayRules {
   private poolStrategy() {
     const result = [];
     if (!this.max && !this.min) return this.init;
-    const count = this.max ? Math.floor(Math.random() * (this.max - this.min + 1)) + this.min : this.min;
+    const count = this.max ? generateRangeRandom(this.min, this.max) : this.min;
     for (let i = 0; i < count; i++) {
       const index = Math.floor(Math.random() * this.init.length); // 随机生成一个下标
       result.push(this.init[index]);
@@ -46,7 +47,7 @@ export default class ArrayRules {
 
   private typeStrategy() {
     const result: SafeAny[] = [];
-    const count = this.max ? Math.floor(Math.random() * (this.max - this.min + 1)) + this.min : this.min;
+    const count = this.max ? generateRangeRandom(this.min, this.max) : this.min;
 
 
     for (let i = 0; i < count; i++) {

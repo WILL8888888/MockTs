@@ -5,8 +5,8 @@ class TemplateArrayTrans implements TemplateDataTransformer {
   private templateString: string = "@array(string, 3)";
 
   constructor(params: string, init: valueType) {
-    if (params.includes('-')) {
-      const [min, max] = params.split('-').map(Number);
+    if (params.includes('to')) {
+      const [min, max] = params.split('to').map(Number);
       this.templateString = `@array(${JSON.stringify(init)}, ${min}, ${max})`;
       return;
     }

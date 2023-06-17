@@ -65,12 +65,9 @@ class Mock {
   private deepDataStructure(value: string[]) {
     let innerDeal: SafeAny = {};
     for (const innerKey in value) {
-      if (isObject(value[innerKey]) || Array.isArray(value[innerKey])) {
-        let [innerGenKey, innerGenVal] = Object.entries(this.gen({ [innerKey]: value[innerKey] }))[0]
-        innerDeal[innerGenKey] = innerGenVal;
-      } else {
-        innerDeal[innerKey] = value[innerKey];
-      }
+      const isComplexType = isObject(value[innerKey]) || Array.isArray(value[innerKey]);
+      let [innerGenKey, innerGenVal] = Object.entries(this.gen({ [innerKey]: value[innerKey] }))[0]
+      innerDeal[isComplexType ? innerGenKey : innerKey] = isComplexType ? innerGenVal : value[innerKey];
     }
     return innerDeal;
   }
@@ -138,21 +135,26 @@ class Mock {
   }
 
   gen(config: string | { [key: string]: valueType; }) {
-    let generator: DataGenerator = new BooleanGenerator(new BooleanRules().booleanRandom());
+    if (!(isObject(config) || typeof config === 'string')) throw new Error('Unknown parameter type');
     let isObjectType = false;
     let templateName = '';
-    //针对mock.generate({})模板的情况
-    if (isObject(config)) {
-      isObjectType = true;
-      const templateBuild = this.generatorIsObjectBuild(config as { [key: string]: valueType; });
-      templateName = templateBuild.templateName;
-      return templateBuild.generateorTemplateResult;
-    } else if (typeof config === 'string') {
-      generator = this.generatorBuild(config);
-    } else {
-      throw new Error('Unknown parameter type')
-    }
-    return generator.generate(isObjectType, templateName);
+    return [{
+      //针对mock.generate({})模板的情况
+      rules: isObject(config),
+      action: () => {
+        isObjectType = true;
+        const templateBuild = this.generatorIsObjectBuild(config as { [key: string]: valueType; });
+        templateName = templateBuild.templateName;
+        return templateBuild.generateorTemplateResult;
+      }
+    }, {
+      rules: typeof config === 'string',
+      action: () => {
+        let generator: DataGenerator = new BooleanGenerator(new BooleanRules().booleanRandom());
+        generator = this.generatorBuild(config as string);
+        return generator.generate(isObjectType, templateName);
+      }
+    }].filter(item => item.rules)[0].action()
   }
 
 

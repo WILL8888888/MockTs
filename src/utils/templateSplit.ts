@@ -25,11 +25,9 @@ export default class DataToRules {
   private splitString(str: string, initData: valueType): configTemplate {
     const [nameSplit, ruleSplit] = str.split("|");
     let initType: string | null = '';
-    if (typeof initData === 'string' && /@/.test(initData)) {
-      initType = extractMockType(initData)?.type ?? 'string'
-    } else {
-      initType = Array.isArray(initData) ? 'array' : typeof initData;
-    }
+    initType = typeof initData === 'string' && /@/.test(initData)
+      ? extractMockType(initData)?.type ?? 'string'
+      : Array.isArray(initData) ? 'array' : typeof initData;
     return {
       name: nameSplit,
       rules: ruleSplit ?? '',

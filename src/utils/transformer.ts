@@ -21,26 +21,28 @@ function handleArray(match: RegExpMatchArray) {
 }
 
 function handleRegex(match: RegExpMatchArray) {
-  const type = match[1];
-  let result = match[3];
+  //@array([1,2,3,4,5], 3, 6)') type: array; matchParams: [1,2,3,4,5], 3, 6
+
+  const type = match[1]; //e.g: array
+  let matchParams = match[3]; //e.g: [1,2,3,4,5], 3, 6
   let params = [];
-  const normalParams = result ? result.split(',').map(param => {
+  const normalParams = matchParams ? matchParams.split(',').map(param => {
     const trimmedParam = param.trim().replace(/"/g, '');
     const numParam = Number(trimmedParam);
     return !isNaN(numParam) ? numParam : trimmedParam;
   }) : [];
   const objRegex = /{.*}/; // 匹配字符串中的对象部分
   const arrayRegex = /\[.*?\]/; // 匹配字符串中的数组部分
-  params = objRegex.test(result) ? hasObjDeal(result?.match(objRegex) ?? [], result) :
-    arrayRegex.test(result) ? JSON.parse(`[${result}]`) : normalParams;
+  params = objRegex.test(matchParams) ? hasObjDeal(matchParams?.match(objRegex) ?? [], matchParams) :
+    arrayRegex.test(matchParams) ? JSON.parse(`[${matchParams}]`) : normalParams;
 
   return { type: type as generatorType, params };
 }
 
 export function hasObjDeal(match: string[], result: string) {
-  const obj = JSON.parse(match[0]); // 将匹配到的对象部分转换为对象
-  const res = result.replace(/{.*}/, JSON.stringify(obj)); // 将对象部分替换为转换后的对象
-  return JSON.parse(`[${res}]`);
+  const paramHasObj = JSON.parse(match[0]); // 将匹配到的对象部分转换为对象
+  const afterTransObj = result.replace(/{.*}/, JSON.stringify(paramHasObj)); // 将对象部分替换为转换后的对象
+  return JSON.parse(`[${afterTransObj}]`);
 }
 
 export function extractMockType(mockType: string): { type: generatorType, params: SafeAny[] } | null {

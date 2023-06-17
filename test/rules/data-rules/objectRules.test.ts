@@ -2,6 +2,11 @@ import { it, expect, describe } from 'vitest';
 import ObjectRules from 'src/rulesMarket/data-rules/objectRules';
 
 describe('objectRandom', () => {
+    it('invalid object for init is not object', () => {
+        const objectRules = new ObjectRules(2, 2, [] as SafeAny);
+        expect(() => { objectRules.objectRandom() }).toThrow('Invalid type! from: @object');
+    });
+
     it('create object if no pool', () => {
         const objectRules = new ObjectRules(3, 7, undefined as SafeAny);
         const result = objectRules.objectRandom();

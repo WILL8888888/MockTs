@@ -9,7 +9,7 @@ import TemplatePhoneNumberTrans from '../../src/factory/template-transformers/te
 
 describe('ArrayTransfomer', () => {
     it('generate Array transformer', () => {
-        const trans1 = new TemplateArrayTrans('1-5', 'tran1');
+        const trans1 = new TemplateArrayTrans('1 to 5', 'tran1');
         expect(trans1.transformer()).toBe('@array("tran1", 1, 5)');
 
         const trans2 = new TemplateArrayTrans('+3', 'trans2');
@@ -36,7 +36,7 @@ describe('BooleanTransfomer', () => {
 
 describe('NumberTransformer', () => {
     it('generate Number transformer', () => {
-        const trans1 = new TemplateNumberTrans('1-5', 3);
+        const trans1 = new TemplateNumberTrans('1 to 5', 3);
         expect(trans1.transformer()).toBe('@number(1, 5, 3)');
 
         const trans2 = new TemplateNumberTrans('+2', 5);
@@ -49,7 +49,7 @@ describe('NumberTransformer', () => {
 
 describe('StringTransformer', () => {
     it('generate String transformer', () => {
-        const trans1 = new TemplateStringTrans('1-5', 'abc');
+        const trans1 = new TemplateStringTrans('1 to 5', 'abc');
         expect(trans1.transformer()).toBe('@string(abc, 1, 5)');
 
         const trans2 = new TemplateStringTrans('', 'def');
@@ -59,7 +59,7 @@ describe('StringTransformer', () => {
 
 describe('ObjectTransformer', () => {
     it('generate Object transformer', () => {
-        const trans1 = new TemplateObjectTrans('2-4', { foo: 'bar', baz: 123 });
+        const trans1 = new TemplateObjectTrans('2 to 4', { foo: 'bar', baz: 123 });
         expect(trans1.transformer()).toBe('@object(2, 4, {"foo":"bar","baz":123})');
 
         const trans2 = new TemplateObjectTrans('3', { foo: 'bar', baz: 123 });
