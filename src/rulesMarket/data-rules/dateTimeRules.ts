@@ -2,6 +2,8 @@ import DateRules from './dateRules';
 import TimeRules from './timeRules';
 export default class dateTimeRules {
   static dateTimeRandom(format: string = 'yyyy-MM-dd HH:mm:ss'): string {
+    const regex = /(yyyy|yy|y|MM|M|dd|d|HH|H|hh|h|mm|m|ss|s|A|a|T)/g;
+    if (!regex.test(format)) throw new Error('Invalid format! from: @dateTime');
     const formatMap: { [key: string]: number | string } = {
       ...DateRules.getFormatMap(),
       ...TimeRules.getFormatMap(),

@@ -20,6 +20,8 @@ export default class TimeRules {
   }
 
   static timeRandom(format: string = 'HH:mm:ss'): string {
+    const regex = /(HH|H|hh|h|mm|m|ss|s|A|a|T)/g;
+    if (!regex.test(format)) throw new Error('Invalid format! from: @time');
     const formatMap = this.getFormatMap();
     return format.replace(/HH|H|hh|h|mm|m|ss|s|A|a|T/g, match => formatMap[match].toString());
   }

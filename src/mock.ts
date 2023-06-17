@@ -120,7 +120,7 @@ class Mock {
     let generator: DataGenerator = new BooleanGenerator(new BooleanRules().booleanRandom());
     let extract = extractMockType(config);
     if (!extract || !typeMap.includes(extract?.type ?? '')) {
-      throw new Error('非法类型！');
+      throw new Error('Invalid type!');
     }
     for (let val of extract.params) {
       if (isObject(val)) {
@@ -150,7 +150,7 @@ class Mock {
     } else if (typeof config === 'string') {
       generator = this.generatorBuild(config);
     } else {
-      console.log('参数类型未知');
+      throw new Error('Unknown parameter type')
     }
     return generator.generate(isObjectType, templateName);
   }

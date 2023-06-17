@@ -5,6 +5,8 @@ import ObjectRules from './objectRules';
 import DateRules from './dateRules';
 import dateTimeRules from './dateTimeRules';
 import TimeRules from './timeRules';
+import { validateMinMax } from '../../utils/validMinMax';
+
 interface TypeMap {
   [key: string]: SafeAny;
 }
@@ -17,7 +19,16 @@ export default class ArrayRules {
     this.min = min;
     this.max = max;
   }
+
+  private valid() {
+    if (this.init && !Array.isArray(this.init) && !(typeof this.init === 'string')) {
+      throw new Error('Invalid type! from: @array')
+    }
+    validateMinMax(this.min, this.max);
+  }
+
   public arrayRandom() {
+    this.valid();
     return Array.isArray(this.init) ? this.poolStrategy() : this.typeStrategy();
   }
 

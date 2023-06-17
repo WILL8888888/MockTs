@@ -20,7 +20,10 @@ export default class DateRules {
       'd': daySingle,
     };
   }
+
   static dateRandom(format: string = 'yyyy-MM-dd'): string {
+    const regex = /(yyyy|yy|y|MM|M|dd|d)/g;
+    if (!regex.test(format)) throw new Error('Invalid format! from: @date');
     const formatMap = this.getFormatMap(format);
     return format.replace(/yyyy|yy|y|MM|M|dd|d/g, match => formatMap[match].toString());
   }

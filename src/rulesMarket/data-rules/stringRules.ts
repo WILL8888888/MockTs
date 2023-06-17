@@ -1,3 +1,5 @@
+import { validateMinMax } from '../../utils/validMinMax';
+
 interface Pool {
   [key: string]: string;
 }
@@ -26,7 +28,13 @@ export default class StringRules {
     return this.pool.charAt(Math.floor(Math.random() * this.pool.length));
   }
 
+  private valid() {
+    if (this.pool && !(typeof this.pool === 'number' || typeof this.pool === 'string')) throw new Error('Invalid type! from: @string')
+    validateMinMax(this.min, this.max)
+  }
+
   public stringRandom(): string {
+    this.valid();
     let length = this.minToLength ? this.minToLength : Math.floor(Math.random() * (this.max - this.min + 1)) + this.min;
     const result = Array.from({ length }, () => this.getRandomChar()).join("");
 

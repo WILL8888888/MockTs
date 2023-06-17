@@ -13,4 +13,15 @@ describe('booleanRandom', () => {
         const result = booleanRules.booleanRandom();
         expect(result).toBe(false);
     });
+
+    it('should return a boolean value', () => {
+        const booleanRules = new BooleanRules();
+        const result = booleanRules.booleanRandom();
+        expect(typeof result).to.equal('boolean');
+    });
+
+    it('booleanRandom should throw an error with invalid odds', () => {
+        const booleanRules = new BooleanRules(-1);
+        expect(() => booleanRules.booleanRandom()).toThrow();
+    });
 });

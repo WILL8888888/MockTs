@@ -1,4 +1,6 @@
 import StringRules from './stringRules';
+import { isObject } from '../../utils/common';
+import { validateMinMax } from '../../utils/validMinMax';
 
 export interface Result {
   [key: string | number]: string | number | boolean;
@@ -18,10 +20,15 @@ export default class ObjectRules {
       const value: string = new StringRules("upper", 3, 7).stringRandom();
       pool ? this.pool = pool : this.pool[key] = value;
     }
+  }
 
+  private valid() {
+    if (!isObject(this.pool)) throw new Error('Invalid type! from: @object')
+    validateMinMax(this.min, this.max);
   }
 
   public objectRandom(): Result {
+    this.valid();
     if (this.max === 0) return this.pool;
     const keys = Object.keys(this.pool);
     const count = Math.min(keys.length, Math.floor(Math.random() * (this.max - this.min + 1)) + this.min);
